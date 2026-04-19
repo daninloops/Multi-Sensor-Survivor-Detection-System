@@ -12,10 +12,20 @@ from src.logger import log_system_data
 from src.metrics import PerformanceMetrics
 import time
 import sys
+import json
+import os
 
 ensure_directories()
 
 if __name__ == "__main__":
+    # Load Deployment Config
+    config_path = os.path.join("deploy", "config.json")
+    if os.path.exists(config_path):
+        with open(config_path) as f:
+            config = json.load(f)
+    else:
+        config = {"fps_limit": 10}
+
     print("Initializing Multi-Sensor Dashboard (YOLO Mode)...")
     detector = YOLODetector()
     metrics = PerformanceMetrics()
@@ -81,7 +91,9 @@ if __name__ == "__main__":
                 break
                 
             print("-" * 40)
-            time.sleep(0.1)  # Faster loop for video
+            
+            # Deployment FPS limiting
+            time.sleep(1 / config.get("fps_limit", 10))
             
             cap.release()
             

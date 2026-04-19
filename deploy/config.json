@@ -1,0 +1,6 @@
+{
+ "camera_resolution": [640,480],
+ "fps_limit": 10,
+ "model": "yolov8n.pt",
+ "device": "cpu"
+}
