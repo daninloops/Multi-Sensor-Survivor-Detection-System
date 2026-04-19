@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import os
+import time
 
 from src.paths import TFLITE_MODEL_PATH
 
@@ -86,27 +87,62 @@ class HumanDetector:
             print(f"ERROR: Prediction failed: {e}")
             raise
 
+    def predict_frame(self):
+        if not hasattr(self, 'cap') or not self.cap.isOpened():
+            self.cap = cv2.VideoCapture(0)
+            
+        ret, frame = self.cap.read()
+        if not ret:
+            print("ERROR: Failed to capture frame.")
+            return {"detected": False, "confidence": 0.0}
+            
+        return self.predict(frame)
+
+    def start_webcam_detection(self):
+        cap = cv2.VideoCapture(0)
+        
+        if not cap.isOpened():
+            print("ERROR: Could not open webcam.")
+            return
+            
+        print("Webcam started successfully.")
+        print("Press 'q' to exit.")
+        
+        while True:
+            start_time = time.time()
+            
+            ret, frame = cap.read()
+            
+            if not ret:
+                print("ERROR: Failed to capture frame.")
+                break
+                
+            result = self.predict(frame)
+            
+            detected = result["detected"]
+            confidence = result["confidence"]
+            
+            end_time = time.time()
+            fps = 1 / (end_time - start_time) if (end_time - start_time) > 0 else 0.0
+            
+            text_info = f"Detected: {detected} | Confidence: {round(confidence, 2)}"
+            cv2.putText(frame, text_info, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0) if detected else (0, 0, 255), 2)
+            
+            text_fps = f"FPS: {round(fps, 1)}"
+            cv2.putText(frame, text_fps, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+            
+            cv2.imshow("Human Detection", frame)
+            
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+                
+        cap.release()
+        cv2.destroyAllWindows()
+        print("Webcam stopped.")
+
 if __name__ == "__main__":
     try:
         detector = HumanDetector()
-        
-        test_image_path = os.path.join(
-            "data",
-            "test_sample.jpg"
-        )
-        
-        if not os.path.exists(test_image_path):
-            print(f"ERROR: Image not found at {test_image_path}")
-        else:
-            image = cv2.imread(test_image_path)
-            
-            if image is None:
-                print(f"ERROR: Could not decode image at {test_image_path}")
-            else:
-                result = detector.predict(image)
-                print("\nPrediction Result:")
-                print(f"Detected: {result['detected']}")
-                print(f"Confidence: {result['confidence']:.2f}")
-                
+        detector.start_webcam_detection()
     except Exception as e:
-        print(f"Testing Error: {e}")
+        print(f"Execution Error: {e}")
