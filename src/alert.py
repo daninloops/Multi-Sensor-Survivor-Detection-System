@@ -18,7 +18,7 @@ def send_alert(confidence):
     current_time = time.time()
     
     if current_time - last_alert_time < ALERT_COOLDOWN:
-        return
+        return False
         
     last_alert_time = current_time
     
@@ -40,3 +40,4 @@ def send_alert(confidence):
             f"{lon}, "
             f"{confidence}\n"
         )
+    return True

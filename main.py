@@ -1,5 +1,5 @@
 from src.paths import ensure_directories
-from src.detector import HumanDetector
+from src.yolo_detector import YOLODetector
 from src.sensors import (
     read_thermal_sensor,
     read_microphone,
@@ -9,21 +9,32 @@ from src.sensors import (
 from src.fusion import fuse_signals
 from src.alert import send_alert
 from src.logger import log_system_data
+from src.metrics import PerformanceMetrics
 import time
 import sys
 
 ensure_directories()
 
 if __name__ == "__main__":
-    print("Initializing Multi-Sensor Dashboard...")
-    detector = HumanDetector()
+    print("Initializing Multi-Sensor Dashboard (YOLO Mode)...")
+    detector = YOLODetector()
+    metrics = PerformanceMetrics()
     
     print("Press Ctrl+C to exit.")
     print("-" * 40)
     
     try:
         while True:
-            camera_data = detector.predict_frame()
+            # Capturing frame for YOLO
+            import cv2
+            cap = cv2.VideoCapture(0)
+            ret, frame = cap.read()
+            if not ret:
+                print("ERROR: Failed to capture frame.")
+                cap.release()
+                continue
+            
+            camera_data = detector.detect_objects(frame)
             thermal_data = read_thermal_sensor()
             sound_data = read_microphone()
             gas_data = read_gas_sensor()
@@ -47,7 +58,8 @@ if __name__ == "__main__":
             
             if fusion_result["survivor_detected"]:
                 print("STATUS: SURVIVOR DETECTED")
-                send_alert(fusion_result["confidence"])
+                if send_alert(fusion_result["confidence"]):
+                    metrics.add_alert()
             else:
                 print("STATUS: NO SURVIVOR")
                 
@@ -61,9 +73,21 @@ if __name__ == "__main__":
                 fusion_result
             )
             
+            metrics.update_metrics(fusion_result)
+            
+            # Show the frame with YOLO boxes
+            cv2.imshow("Multi-Sensor Survivor Detection (YOLO)", frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+                
             print("-" * 40)
-            time.sleep(1.0)  # Pause for readability
+            time.sleep(0.1)  # Faster loop for video
+            
+            cap.release()
             
     except KeyboardInterrupt:
         print("\nExiting System...")
+        cv2.destroyAllWindows()
         sys.exit(0)
+    finally:
+        cv2.destroyAllWindows()

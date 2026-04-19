@@ -8,6 +8,7 @@ BASE_DIR = os.path.abspath(
 # Data directories
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RAW_DIR = os.path.join(DATA_DIR, "raw")
+PROCESSED_DIR = os.path.join(DATA_DIR, "processed")
 TRAIN_DIR = os.path.join(DATA_DIR, "train")
 VAL_DIR = os.path.join(DATA_DIR, "val")
 TEST_DIR = os.path.join(DATA_DIR, "test")
@@ -33,6 +34,7 @@ def ensure_directories():
     dirs = [
         DATA_DIR,
         RAW_DIR,
+        PROCESSED_DIR,
         TRAIN_DIR,
         VAL_DIR,
         TEST_DIR,
