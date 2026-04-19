@@ -7,6 +7,8 @@ from src.sensors import (
     read_ultrasonic
 )
 from src.fusion import fuse_signals
+from src.alert import send_alert
+from src.logger import log_system_data
 import time
 import sys
 
@@ -45,9 +47,20 @@ if __name__ == "__main__":
             
             if fusion_result["survivor_detected"]:
                 print("STATUS: SURVIVOR DETECTED")
+                send_alert(fusion_result["confidence"])
             else:
                 print("STATUS: NO SURVIVOR")
                 
+            print("\nLogging system data...")
+            log_system_data(
+                camera_data,
+                thermal_data,
+                sound_data,
+                gas_data,
+                movement_data,
+                fusion_result
+            )
+            
             print("-" * 40)
             time.sleep(1.0)  # Pause for readability
             
