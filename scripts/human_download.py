@@ -13,7 +13,7 @@ for query in queries:
              query,
              limit=50,
              adult_filter_off=False,
-             output_dir="C:\\Users\\gupta\\OneDrive\\Desktop\\embedded project\\dataset\\train\\human_present",
+             output_dir="data/raw/human_present",
              timeout=60,
              force_replace=False
 )

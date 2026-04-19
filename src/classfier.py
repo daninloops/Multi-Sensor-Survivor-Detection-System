@@ -11,8 +11,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.metrics import classification_report
 
 #configuration variables 
-DATASET_DIR=r"C:\Users\gupta\OneDrive\Desktop\embedded project\dataset"
-MODELS_DIR=r"C:\Users\gupta\OneDrive\Desktop\embedded project\models"
+DATASET_DIR="data"
+MODELS_DIR="models"
 IMG_SIZE=224
 BATCH_SIZE=16
 EPOCHS=15

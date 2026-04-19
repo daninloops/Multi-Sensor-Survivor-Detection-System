@@ -15,7 +15,7 @@ for cls in classes:
     downloader.download(
         cls,
         limit=50,
-        output_dir="C:\\Users\\gupta\\OneDrive\\Desktop\\embedded project\\dataset\\train\\no_human",
+        output_dir="data/raw/no_human",
         force_replace=False,
         adult_filter_off=False,
         timeout=60

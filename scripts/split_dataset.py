@@ -2,9 +2,9 @@ import os
 import shutil
 import random
 
-source   = r"C:\Users\gupta\OneDrive\Desktop\embedded project\dataset\train"
-val_dir  = r"C:\Users\gupta\OneDrive\Desktop\embedded project\dataset\val"
-test_dir = r"C:\Users\gupta\OneDrive\Desktop\embedded project\dataset\test"
+source   = "data/raw"
+val_dir  = "data/val"
+test_dir = "data/test"
 
 random.seed(42)
 
