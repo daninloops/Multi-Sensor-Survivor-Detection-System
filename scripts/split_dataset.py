@@ -2,9 +2,16 @@ import os
 import shutil
 import random
 
-source   = "data/raw"
-val_dir  = "data/val"
-test_dir = "data/test"
+from src.paths import (
+    RAW_DIR,
+    TRAIN_DIR,
+    VAL_DIR,
+    TEST_DIR
+)
+
+source   = RAW_DIR
+val_dir  = VAL_DIR
+test_dir = TEST_DIR
 
 random.seed(42)
 

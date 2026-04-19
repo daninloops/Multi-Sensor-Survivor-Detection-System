@@ -1,4 +1,7 @@
+import os
 from bing_image_downloader import downloader
+from src.paths import RAW_DIR
+
 queries=["person trapped in rubble",
              "earthquake survicor debris",
              "person under collapsed building",
@@ -13,7 +16,7 @@ for query in queries:
              query,
              limit=50,
              adult_filter_off=False,
-             output_dir="data/raw/human_present",
+             output_dir=os.path.join(RAW_DIR, "human_present"),
              timeout=60,
              force_replace=False
 )

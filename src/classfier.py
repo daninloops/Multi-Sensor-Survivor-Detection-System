@@ -10,9 +10,16 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.metrics import classification_report
 
+from src.paths import (
+    TRAIN_DIR,
+    VAL_DIR,
+    TEST_DIR,
+    MODELS_DIR,
+    H5_MODEL_PATH,
+    TFLITE_MODEL_PATH
+)
+
 #configuration variables 
-DATASET_DIR="data"
-MODELS_DIR="models"
 IMG_SIZE=224
 BATCH_SIZE=16
 EPOCHS=15
@@ -33,21 +40,21 @@ train_gen=ImageDataGenerator(
 val_gen=ImageDataGenerator(rescale=1./255)
 
 train_data=train_gen.flow_from_directory(
-    os.path.join(DATASET_DIR,"train"),
+    TRAIN_DIR,
     target_size=(IMG_SIZE,IMG_SIZE),
     batch_size=BATCH_SIZE,
     class_mode="binary"
 )
 
 val_data=val_gen.flow_from_directory(
-    os.path.join(DATASET_DIR,"val"),
+    VAL_DIR,
     target_size=(IMG_SIZE,IMG_SIZE),
     batch_size=BATCH_SIZE,
     class_mode="binary"
 )
 
 test_data=val_gen.flow_from_directory(
-    os.path.join(DATASET_DIR,"test"),
+    TEST_DIR,
     target_size=(IMG_SIZE,IMG_SIZE),
     batch_size=BATCH_SIZE,
     class_mode="binary",
@@ -88,7 +95,7 @@ early_stop=EarlyStopping(
 )
 #ModelCheckpoint saves the best moel automatically during training 
 checkpoint=ModelCheckpoint(
-    filepath=os.path.join(MODELS_DIR,"best_classifier.h5"),
+    filepath=H5_MODEL_PATH,
     monitor="val_loss",
     save_best_only=True,
     verbose=1#provides a basic output or progress indicator about what a program or function is doing 
@@ -122,7 +129,7 @@ print(classification_report(
 )
         )
 #save file.h5
-h5_path=os.path.join(MODELS_DIR,"human_classifier.h5")
+h5_path=H5_MODEL_PATH
 model.save(h5_path)
 print(f"\nFull model saved to {h5_path}")
 
@@ -136,7 +143,7 @@ converter.optimizations = [tf.lite.Optimize.DEFAULT]
 
 tflite_model = converter.convert()
 
-tflite_path = os.path.join(MODELS_DIR, "human_classifier.tflite")
+tflite_path = TFLITE_MODEL_PATH
 with open(tflite_path, "wb") as f:
     f.write(tflite_model)
 

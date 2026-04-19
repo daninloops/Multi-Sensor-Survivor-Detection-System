@@ -1,4 +1,6 @@
+import os
 from bing_image_downloader import downloader
+from src.paths import RAW_DIR
 
 classes=["collapsed building debris",
 "earthquake rubble no people",
@@ -15,7 +17,7 @@ for cls in classes:
     downloader.download(
         cls,
         limit=50,
-        output_dir="data/raw/no_human",
+        output_dir=os.path.join(RAW_DIR, "no_human"),
         force_replace=False,
         adult_filter_off=False,
         timeout=60
